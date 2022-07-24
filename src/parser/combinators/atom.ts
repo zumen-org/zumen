@@ -1,6 +1,6 @@
 import { firstIn, Parser, stringl, until } from "../../deps.ts";
 import { Expression } from "../parser.ts";
-import { delimiters } from "./util.ts";
+import { word } from "./util.ts";
 
 /*
 	description:
@@ -12,7 +12,7 @@ import { delimiters } from "./util.ts";
 */
 export default Parser.combinator<Expression>(ca => {
 	stringl(":")(ca);
-	const value = firstIn(delimiters.map(v => until(v)))(ca);
+	const value = word(ca);
 
 	return {
 		type: "atom",

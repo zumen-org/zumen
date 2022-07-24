@@ -1,6 +1,6 @@
 import { firstIn, Parser, stringl, until } from "../../deps.ts";
 import { Expression } from "../parser.ts";
-import { delimiters } from "./util.ts";
+import { word } from "./util.ts";
 
 /*
 	description:
@@ -11,7 +11,7 @@ import { delimiters } from "./util.ts";
 		64
 */
 export default Parser.combinator<Expression>(ca => {
-	const value = firstIn(delimiters.map(v => until(v)))(ca);
+	const value = word(ca);
 	const numberValue = parseInt(value);
 
 	if (isNaN(numberValue))
