@@ -1,4 +1,4 @@
-import { many, oneIn, Parser } from "../deps.ts";
+import { oneIn, Parser, many } from "../deps.ts";
 import atom from "./combinators/atom.ts";
 import number from "./combinators/number.ts";
 import string from "./combinators/string.ts";
@@ -31,7 +31,7 @@ export const parse = (program: string) => {
 
 	const expression = Parser.combinator(ca => {
 		whitespace(ca);
-		const r = many(oneIn(atom, string, number));
+		const r = oneIn(atom, string, number)(ca);
 		whitespace(ca);
 
 		return r;
