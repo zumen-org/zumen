@@ -5,8 +5,9 @@ const program = Deno.readTextFileSync(
 	"/home/udit/CodingProjects/zumen/test.lisp",
 );
 
-console.log(program);
-console.log("\n---------------------------------\n");
+// uncomment after debugging ends
+// console.log(program);
+// console.log("\n---------------------------------\n");
 
 const result = parse(program);
 
