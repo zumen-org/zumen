@@ -11,7 +11,6 @@ import { delimiters } from "./util.ts";
 		64
 */
 export default Parser.combinator<Expression>(ca => {
-	stringl(":")(ca);
 	const value = firstIn(delimiters.map(v => until(v)))(ca);
 	const numberValue = parseInt(value);
 
