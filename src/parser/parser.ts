@@ -37,8 +37,8 @@ export const expression = Parser.combinator(ca => {
 	return r;
 });
 
-export const parse = (_program: string) => {
+export const parse = (program: string) => {
 	const parser = new Parser();
 
-	return parser.parse("(hi :abc :def)", many(expression));
+	return parser.parse(program, many(expression));
 };
