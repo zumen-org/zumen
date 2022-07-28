@@ -1,22 +1,14 @@
-import { ParseError, Parser } from "./deps.ts";
+import { colors, ParseError, Parser } from "./deps.ts";
 import { parse } from "./parser/parser.ts";
 
-const program = Deno.readTextFileSync(
-	"/home/udit/CodingProjects/zumen/test.lisp",
-);
+function main() {
+	const program = Deno.readTextFileSync("test.lisp");
+	const result = parse(program);
 
-console.log(program);
-console.log("\n---------------------------------\n");
+	if (result instanceof ParseError)
+		return console.log(colors.red("fatal"), Parser.format(result));
 
-const result = parse(program);
+	console.log(result);
+}
 
-if (result instanceof ParseError) console.log(Parser.format(result));
-else if (result instanceof Error) console.log(result.message);
-else
-	console.log(
-		Deno.inspect(result, {
-			colors: true,
-			depth: 30,
-			sorted: true,
-		}),
-	);
+main();
