@@ -1,4 +1,4 @@
-import { colors, ParseError, Parser } from "./deps.ts";
+import { ParseError, Parser } from "./deps.ts";
 import { evaluate } from "./evaluator/evaluator.ts";
 import { parse } from "./parser/parser.ts";
 import { exit } from "./utils.ts";

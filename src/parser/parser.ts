@@ -7,28 +7,33 @@ import string from "./combinators/string.ts";
 import { whitespace } from "./combinators/util.ts";
 import { zOneIn } from "./utils.ts";
 
-export type Expression =
-	| {
-			type: "atom";
-			value: string;
-	  }
-	| {
-			type: "string";
-			value: string;
-	  }
-	| {
-			type: "number";
-			value: number;
-	  }
-	| {
-			type: "list";
-			values: Expression[];
-	  }
-	| {
-			type: "fun-call";
-			name: string;
-			arguments: Expression[];
-	  };
+export interface Atom {
+	type: "atom";
+	value: string;
+}
+
+export interface String {
+	type: "string";
+	value: string;
+}
+
+export interface Number {
+	type: "number";
+	value: number;
+}
+
+export interface List {
+	type: "list";
+	values: Expression[];
+}
+
+export interface FunCall {
+	type: "fun-call";
+	name: string;
+	arguments: Expression[];
+}
+
+export type Expression = Atom | String | Number | List | FunCall;
 
 export const expression = Parser.combinator(ca => {
 	whitespace(ca);

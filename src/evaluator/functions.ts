@@ -1,20 +1,20 @@
-import { Expression } from "../parser/parser.ts";
+import { Atom, FunCall, List, Number, String } from "../parser/parser.ts";
 
 type Argument =
 	| {
 			name: string;
-			type: Exclude<Exclude<Expression["type"], "list">, "fun-call">;
+			type: (Atom | String | Number)["type"];
 			variadic?: boolean;
 	  }
 	| {
 			name: string;
-			type: "list";
+			type: List["type"];
 			variadic?: boolean;
-			of: Exclude<Expression["type"], "list">;
+			of: (Atom | String | Number | FunCall)["type"];
 	  }
 	| {
 			name: string;
-			type: "fun-call";
+			type: FunCall["type"];
 			variadic?: boolean;
 			function: string | string[];
 	  };
