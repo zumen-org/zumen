@@ -40,5 +40,5 @@ export const zOneIn = <T>(...combinators: Combinator<T>[]) =>
 		// throw the error for the combinator that got the farthest
 		const positions = results.map(v => v.pos);
 		const farthestPosIndex = positions.indexOf(Math.max(...positions));
-		throw results[farthestPosIndex];
+		throw results[farthestPosIndex].err;
 	});
