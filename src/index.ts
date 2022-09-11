@@ -12,8 +12,8 @@ function main() {
 
 	if (!validate(result)) return;
 
-	const i3json = evaluate(result);
-	console.log(i3json);
+	const flows = evaluate(result);
+	console.log(flows);
 }
 
 main();

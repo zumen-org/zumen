@@ -1,3 +1,5 @@
+import { WorkspaceDefinition } from "./evaluator/utils.ts";
+
 type Container =
 	| "root"
 	| "output"
@@ -29,3 +31,8 @@ type IndependentNode = {
 };
 
 export type Node = IndependentNode | LayoutNode;
+
+export interface Flow {
+	name: string;
+	definitions: WorkspaceDefinition[];
+}

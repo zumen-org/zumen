@@ -1,4 +1,5 @@
 import { Expression, FunCall, List, Number, String } from "../parser/parser.ts";
+import { exit } from "../utils.ts";
 
 export interface Exec {
 	programName: string;
@@ -26,9 +27,18 @@ function toArrangementOrExec(call: FunCall): Arrangement | Exec {
 		};
 	} else {
 		const [ratioExpr, ...nodeExprs] = (call as FunCall).arguments;
+		const ratio = (ratioExpr as List).values.map(v => (v as Number).value);
+		const nodes = (nodeExprs as FunCall[]).map(toArrangementOrExec);
+
+		if (ratio.reduce((a, b) => a + b) != 100)
+			exit(`Sum of ratio entries must be 100!`);
+
+		if (ratio.length != nodes.length)
+			exit(`Different number of ratios and layouts provided!`);
+
 		return {
-			ratio: (ratioExpr as List).values.map(v => (v as Number).value),
-			nodes: (nodeExprs as FunCall[]).map(toArrangementOrExec),
+			ratio,
+			nodes,
 		};
 	}
 }
@@ -36,8 +46,6 @@ function toArrangementOrExec(call: FunCall): Arrangement | Exec {
 export const getWorkspaceDefinition = (
 	call: Expression,
 ): WorkspaceDefinition => {
-	// no validation needed as it's already done before
-
 	// top level layout node
 	const [workspace, node] = (call as FunCall).arguments;
 
@@ -46,6 +54,12 @@ export const getWorkspaceDefinition = (
 
 	const ratio = (ratioExpr as List).values.map(v => (v as Number).value);
 	const nodes = (nodeExprs as FunCall[]).map(toArrangementOrExec);
+
+	if (ratio.length != nodes.length)
+		exit(`Different number of ratios and layouts provided!`);
+
+	if (ratio.reduce((a, b) => a + b) != 100)
+		exit(`Sum of ratio entries must be 100!`);
 
 	return {
 		workspace: (workspace as Number).value,
