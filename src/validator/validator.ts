@@ -10,8 +10,6 @@ const validateArgs = (name: string, args: Expression[]) => {
 
 	const expectedArgLength = expectedArgs.length;
 	const lastExpectedArg = expectedArgs[expectedArgLength - 1];
-
-	// @ts-expect-error only the last element needs variadic
 	const variadic = lastExpectedArg.variadic ?? false;
 
 	// check if the number of arguments is correct

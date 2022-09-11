@@ -1,5 +1,4 @@
 import { Atom, FunCall, List, Number, String } from "../parser/parser.ts";
-import { DeepReadOnly } from "../utils.ts";
 
 type Argument =
 	| {
@@ -20,12 +19,8 @@ type Argument =
 			function: string | string[];
 	  };
 
-const makeFnRecord = <T extends Record<string, DeepReadOnly<Argument[]>>>(
-	v: T,
-) => v;
-
 // variadic argument must be the last argument in the array
-export const Functions = makeFnRecord({
+export const Functions: Record<string, Argument[]> = {
 	flow: [
 		{
 			name: "name of the flow",
@@ -77,37 +72,4 @@ export const Functions = makeFnRecord({
 		{ name: "program name", type: "string" },
 		{ name: "program class", type: "string" },
 	],
-} as const);
-
-export interface Exec {
-	programName: string;
-	programClass: string;
-}
-
-export interface Arrangement {
-	ratio: number[];
-	nodes: (Arrangement | Exec)[];
-}
-
-export interface WorkspaceDefinition {
-	workspace: number;
-	node: Arrangement;
-}
-
-export interface ExecCall {
-	type: FunCall["type"];
-	name: "exec";
-	arguments: [programName: String, programClass: String];
-}
-
-export interface ArrangementCall {
-	type: FunCall["type"];
-	name: "horizontal" | "vertical";
-	arguments: [ratio: List, ...nodes: (ArrangementCall | ExecCall)[]];
-}
-
-export interface WorkspaceDefinitionCall {
-	type: FunCall["type"];
-	name: "ws";
-	arguments: [workspace: Number, node: ArrangementCall];
-}
+};

@@ -1,46 +1,54 @@
-import {
-	Arrangement,
-	ArrangementCall,
-	Exec,
-	ExecCall,
-	WorkspaceDefinition,
-	WorkspaceDefinitionCall,
-} from "../validator/functions.ts";
+import { Expression, FunCall, List, Number, String } from "../parser/parser.ts";
 
-import { Number } from "../parser/parser.ts";
+export interface Exec {
+	programName: string;
+	programClass: string;
+}
 
-function toNonCall(call: ArrangementCall | ExecCall): Arrangement | Exec {
+interface Arrangement {
+	ratio: number[];
+	nodes: (Arrangement | Exec)[];
+}
+
+export interface WorkspaceDefinition {
+	workspace: number;
+	node: Arrangement;
+}
+
+function toArrangementOrExec(call: FunCall): Arrangement | Exec {
 	if (call.name == "exec") {
-		const [programName, programClass] = call.arguments.map(v => v.value);
+		const [programName, programClass] = call.arguments.map(
+			v => (v as String).value,
+		);
 		return {
 			programName,
 			programClass,
 		};
 	} else {
-		const [ratioCall, ...nodesCall] = call.arguments;
+		const [ratioExpr, ...nodeExprs] = (call as FunCall).arguments;
 		return {
-			ratio: ratioCall.values.map(v => (v as Number).value),
-			nodes: nodesCall.map(toNonCall),
+			ratio: (ratioExpr as List).values.map(v => (v as Number).value),
+			nodes: (nodeExprs as FunCall[]).map(toArrangementOrExec),
 		};
 	}
 }
 
 export const getWorkspaceDefinition = (
-	call: WorkspaceDefinitionCall,
+	call: Expression,
 ): WorkspaceDefinition => {
 	// no validation needed as it's already done before
 
 	// top level layout node
-	const [workspace, node] = call.arguments;
+	const [workspace, node] = (call as FunCall).arguments;
 
 	// ratio and internal nodes
-	const [ratioCall, ...nodesCall] = node.arguments;
+	const [ratioExpr, ...nodeExprs] = (node as FunCall).arguments;
 
-	const ratio = ratioCall.values.map(v => (v as Number).value);
-	const nodes = nodesCall.map(toNonCall);
+	const ratio = (ratioExpr as List).values.map(v => (v as Number).value);
+	const nodes = (nodeExprs as FunCall[]).map(toArrangementOrExec);
 
 	return {
-		workspace: workspace.value,
+		workspace: (workspace as Number).value,
 		node: {
 			ratio,
 			nodes,
