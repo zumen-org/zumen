@@ -1,18 +1,20 @@
 import { Expression, FunCall, String } from "../parser/parser.ts";
 import { Node } from "../types.ts";
-import { getWorkspaceDefinition } from "./utils.ts";
+import { getWorkspaceDefinition, WorkspaceDefinition } from "./utils.ts";
 
-export const evaluate = (definition: FunCall[]): Node[] => {
-	const nodes: Node[] = [];
+export const evaluate = (definition: FunCall[]): Node => {
+	for (const flow of definition) {
+		const [nameExpr, ...wsExprs] = flow.arguments as [String, Expression];
+		const flowName = nameExpr.value;
 
-	for (const expression of definition) {
-		const [name, args] = expression.arguments as [String, Expression];
+		const wsDefinitions: WorkspaceDefinition[] = [];
 
-		const definition = getWorkspaceDefinition(args);
+		for (const wsDef of wsExprs)
+			wsDefinitions.push(getWorkspaceDefinition(wsDef));
 
-		console.log(name.value);
-		console.log(definition);
+		console.log(wsDefinitions);
 	}
 
-	return nodes;
+	// todo
+	return undefined as any;
 };

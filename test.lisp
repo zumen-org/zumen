@@ -4,4 +4,8 @@
       (exec "firefox" "Firefox*")
       (vertical '(60 40)
          (exec "telegram" "Telegram*")
-         (exec "urxvt" "urxvt*")))))
+         (exec "urxvt" "Urxvt*"))))
+  (ws 2
+    (vertical '(10 90)
+      (exec "firefox" "Firefox*")
+      (exec "kitty" "Kitty*"))))
