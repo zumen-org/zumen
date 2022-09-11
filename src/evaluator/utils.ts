@@ -5,7 +5,7 @@ import {
 	ExecCall,
 	WorkspaceDefinition,
 	WorkspaceDefinitionCall,
-} from "./functions.ts";
+} from "../validator/functions.ts";
 
 import { Number } from "../parser/parser.ts";
 
