@@ -79,20 +79,35 @@ export const Functions = makeFnRecord({
 	],
 } as const);
 
-interface ExecCall {
-	type: FunCall["type"];
-	name: "exec";
-	arguments: [programName: string, programClass: string];
+export interface Exec {
+	programName: string;
+	programClass: string;
 }
 
-interface ArrangementCall {
+export interface Arrangement {
+	ratio: number[];
+	nodes: (Arrangement | Exec)[];
+}
+
+export interface WorkspaceDefinition {
+	workspace: number;
+	node: Arrangement;
+}
+
+export interface ExecCall {
+	type: FunCall["type"];
+	name: "exec";
+	arguments: [programName: String, programClass: String];
+}
+
+export interface ArrangementCall {
 	type: FunCall["type"];
 	name: "horizontal" | "vertical";
-	arguments: [ratio: number[], nodes: ArrangementCall | ExecCall];
+	arguments: [ratio: List, ...nodes: (ArrangementCall | ExecCall)[]];
 }
 
 export interface WorkspaceDefinitionCall {
 	type: FunCall["type"];
 	name: "ws";
-	arguments: [workspace: number, nodes: ArrangementCall];
+	arguments: [workspace: Number, node: ArrangementCall];
 }

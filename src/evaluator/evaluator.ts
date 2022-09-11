@@ -1,7 +1,8 @@
-import { Expression } from "../parser/parser.ts";
+import { Expression, String } from "../parser/parser.ts";
 import { Node } from "../types.ts";
 import { exit } from "../utils.ts";
 import { Functions, WorkspaceDefinitionCall } from "./functions.ts";
+import { getWorkspaceDefinition } from "./utils.ts";
 
 const checkFunctionArgs = (name: string, args: Expression[]) => {
 	const expectedArgs = Functions[name as keyof typeof Functions];
@@ -72,12 +73,16 @@ export const evaluate = (definition: Expression[]): Node[] => {
 		if (expression.type == "fun-call" && expression.name == "flow") {
 			checkFunctionArgs(expression.name, expression.arguments);
 
-			const flowArgs = expression.arguments as [
-				flowName: string,
-				definition: WorkspaceDefinitionCall,
+			const [name, args] = expression.arguments as [
+				name: String,
+				// todo: remove `WorkspaceDefinitionCall` and replace with `Expression`
+				args: WorkspaceDefinitionCall,
 			];
 
-			console.log(flowArgs);
+			const definition = getWorkspaceDefinition(args);
+
+			console.log(name.value);
+			console.log(definition);
 		} else
 			exit(
 				`definition files must only contain 'flow' function calls, found:\n`,
