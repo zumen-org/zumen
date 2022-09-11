@@ -78,3 +78,21 @@ export const Functions = makeFnRecord({
 		{ name: "program class", type: "string" },
 	],
 } as const);
+
+interface ExecCall {
+	type: FunCall["type"];
+	name: "exec";
+	arguments: [programName: string, programClass: string];
+}
+
+interface ArrangementCall {
+	type: FunCall["type"];
+	name: "horizontal" | "vertical";
+	arguments: [ratio: number[], nodes: ArrangementCall | ExecCall];
+}
+
+export interface WorkspaceDefinitionCall {
+	type: FunCall["type"];
+	name: "ws";
+	arguments: [workspace: number, nodes: ArrangementCall];
+}

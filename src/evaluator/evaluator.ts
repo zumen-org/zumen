@@ -1,9 +1,9 @@
 import { Expression } from "../parser/parser.ts";
 import { Node } from "../types.ts";
 import { exit } from "../utils.ts";
-import { Functions } from "./functions.ts";
+import { Functions, WorkspaceDefinitionCall } from "./functions.ts";
 
-const checkFunctionArgs = (name: string, args: Expression[]): args is any[] => {
+const checkFunctionArgs = (name: string, args: Expression[]) => {
 	const expectedArgs = Functions[name as keyof typeof Functions];
 
 	// check if the function exists
@@ -22,6 +22,8 @@ const checkFunctionArgs = (name: string, args: Expression[]): args is any[] => {
 		);
 
 	const errorPreface = `In call to function '${name}'`;
+
+	// loop over the actual args and compare them with expected args
 	for (let i = 0; i < args.length; i++) {
 		const arg = args[i];
 		const expectedArg =
@@ -29,13 +31,13 @@ const checkFunctionArgs = (name: string, args: Expression[]): args is any[] => {
 
 		const argErrorPreface = `${errorPreface}, in argument ${i + 1}`;
 
-		// check if the argument is of the proper type
+		// check if the argument is of the expected type
 		if (arg.type != expectedArg.type)
 			return exit(
 				`${argErrorPreface}, expected ${expectedArg.type}, got ${arg.type}'`,
 			);
 
-		// if the argument is a function call, perform checks for that function
+		// if the argument is a function call, perform respective checks for that function
 		if (arg.type == "fun-call" && expectedArg.type == "fun-call") {
 			if (
 				Array.isArray(expectedArg.function)
@@ -61,8 +63,6 @@ const checkFunctionArgs = (name: string, args: Expression[]): args is any[] => {
 						`${argErrorPreface}, expected list to contain elements of type ${expectedArg.of}, found element of type ${arg.values[i].type} at list index ${i}`,
 					);
 	}
-
-	return true;
 };
 
 export const evaluate = (definition: Expression[]): Node[] => {
@@ -70,8 +70,14 @@ export const evaluate = (definition: Expression[]): Node[] => {
 
 	for (const expression of definition) {
 		if (expression.type == "fun-call" && expression.name == "flow") {
-			const flowArgs = expression.arguments;
-			checkFunctionArgs(expression.name, flowArgs);
+			checkFunctionArgs(expression.name, expression.arguments);
+
+			const flowArgs = expression.arguments as [
+				flowName: string,
+				definition: WorkspaceDefinitionCall,
+			];
+
+			console.log(flowArgs);
 		} else
 			exit(
 				`definition files must only contain 'flow' function calls, found:\n`,
