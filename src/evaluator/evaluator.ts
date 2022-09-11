@@ -53,14 +53,14 @@ const checkFunctionArgs = (name: string, args: Expression[]) => {
 
 		// if the argument is a list, check if all elements are of expected type
 		if (arg.type == "list" && expectedArg.type == "list")
-			for (const element of arg.values)
-				if (element.type != expectedArg.of)
+			for (let j = 0; j < arg.values.length; j++)
+				if (arg.values[j].type != expectedArg.of)
 					return exit(
 						`${errorPreface}, in argument ${
 							i + 1
 						}, expected list to contain elements of type ${
 							expectedArg.of
-						}, found element of type ${element.type}`,
+						}, found element of type ${arg.values[j].type} at list index ${j}`,
 					);
 	}
 };
@@ -70,7 +70,7 @@ export const evaluate = (definition: Expression[]): Node[] => {
 
 	for (const expression of definition) {
 		if (expression.type == "fun-call" && expression.name == "flow") {
-			checkFunctionArgs("flow", expression.arguments);
+			checkFunctionArgs(expression.name, expression.arguments);
 		} else
 			console.log(
 				colors.red("fatal"),
