@@ -1,4 +1,3 @@
-import { colors } from "../deps.ts";
 import { Expression } from "../parser/parser.ts";
 import { Node } from "../types.ts";
 import { exit } from "../utils.ts";
@@ -72,8 +71,7 @@ export const evaluate = (definition: Expression[]): Node[] => {
 		if (expression.type == "fun-call" && expression.name == "flow") {
 			checkFunctionArgs(expression.name, expression.arguments);
 		} else
-			console.log(
-				colors.red("fatal"),
+			exit(
 				`definition files must only contain 'flow' function calls, found:\n`,
 				expression,
 			);
