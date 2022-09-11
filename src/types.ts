@@ -16,18 +16,18 @@ type Layout =
 	| "dockarea"
 	| "output";
 
-type LayoutNode = {
+export type LayoutNode = {
 	layout: Layout;
 	percent: number;
 	type: Container;
-	nodes: IndependentNode[];
+	nodes: Node[];
 };
 
-type IndependentNode = {
-	percent: number;
+export type IndependentNode = {
 	name: string;
 	type: Container;
-	swallows: { class: string; instance: string }[];
+	percent: number;
+	swallows: { class: string }[];
 };
 
 export type Node = IndependentNode | LayoutNode;

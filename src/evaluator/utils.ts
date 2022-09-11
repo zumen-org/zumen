@@ -6,7 +6,7 @@ export interface Exec {
 	programClass: string;
 }
 
-interface Arrangement {
+export interface Arrangement {
 	split: "horizontal" | "vertical";
 	ratio: number[];
 	nodes: (Arrangement | Exec)[];
