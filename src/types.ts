@@ -23,14 +23,14 @@ export type LayoutNode = {
 	nodes: Node[];
 };
 
-export type IndependentNode = {
+export type IndividualNode = {
 	name: string;
 	type: Container;
 	percent: number;
 	swallows: { class: string }[];
 };
 
-export type Node = IndependentNode | LayoutNode;
+export type Node = IndividualNode | LayoutNode;
 
 export interface Flow {
 	name: string;

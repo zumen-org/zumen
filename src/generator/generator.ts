@@ -1,5 +1,5 @@
-import { Arrangement, Exec } from "../evaluator/utils.ts";
-import { Flow, IndependentNode, LayoutNode, Node } from "../types.ts";
+import { Arrangement } from "../evaluator/utils.ts";
+import { Flow, IndividualNode, LayoutNode } from "../types.ts";
 
 interface Layout {
 	workspace: number;
@@ -12,7 +12,9 @@ function getNode(arrangement: Arrangement, percent: number): LayoutNode {
 		percent: percent,
 		type: "con",
 		nodes: arrangement.nodes.map((v, i) => {
+			// if this node is a layout
 			if ("split" in v) return getNode(v, arrangement.ratio[i]);
+			// if this node is an Exec/Individual node
 			else
 				return {
 					name: v.programName,
@@ -23,7 +25,7 @@ function getNode(arrangement: Arrangement, percent: number): LayoutNode {
 							class: v.programClass,
 						},
 					],
-				} as IndependentNode;
+				} as IndividualNode;
 		}),
 	};
 }
