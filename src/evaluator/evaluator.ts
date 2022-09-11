@@ -35,7 +35,21 @@ const checkFunctionArgs = (name: string, args: Expression[]) => {
 			);
 
 		// if the argument is a function call, perform checks for that function
-		if (arg.type == "fun-call") checkFunctionArgs(arg.name, arg.arguments);
+		if (arg.type == "fun-call" && expectedArg.type == "fun-call") {
+			if (
+				Array.isArray(expectedArg.function)
+					? !expectedArg.function.some(v => v === arg.name)
+					: expectedArg.function != arg.name
+			)
+				exit(
+					`${errorPreface}, expected only call to ${
+						Array.isArray(expectedArg.function)
+							? expectedArg.function.map(v => `'${v}'`).join(" or ")
+							: `'${expectedArg.function}'`
+					}, found call to '${arg.name}'`,
+				);
+			checkFunctionArgs(arg.name, arg.arguments);
+		}
 
 		// if the argument is a list, check if all elements are of expected type
 		if (arg.type == "list" && expectedArg.type == "list")
