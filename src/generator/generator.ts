@@ -1,7 +1,7 @@
 import { Arrangement } from "../evaluator/utils.ts";
 import { Flow, IndividualNode, LayoutNode } from "../types.ts";
 
-interface Layout {
+export interface Layout {
 	workspace: number;
 	node: LayoutNode;
 }
