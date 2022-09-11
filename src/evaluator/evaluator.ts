@@ -25,12 +25,12 @@ const checkFunctionArgs = (name: string, args: Expression[]) => {
 		const expectedArg =
 			variadic && i >= expectedArgLength ? lastExpectedArg : expectedArgs[i];
 
+		const argErrorPreface = `${errorPreface}, in argument ${i + 1}`;
+
 		// check if the argument is of the proper type
 		if (arg.type != expectedArg.type)
 			return exit(
-				`${errorPreface}, in argument ${i + 1}, expected ${
-					expectedArg.type
-				}, got ${arg.type}'`,
+				`${argErrorPreface}, expected ${expectedArg.type}, got ${arg.type}'`,
 			);
 
 		// if the argument is a function call, perform checks for that function
@@ -47,19 +47,16 @@ const checkFunctionArgs = (name: string, args: Expression[]) => {
 							: `'${expectedArg.function}'`
 					}, found call to '${arg.name}'`,
 				);
+
 			checkFunctionArgs(arg.name, arg.arguments);
 		}
 
 		// if the argument is a list, check if all elements are of expected type
 		if (arg.type == "list" && expectedArg.type == "list")
-			for (let j = 0; j < arg.values.length; j++)
-				if (arg.values[j].type != expectedArg.of)
+			for (let i = 0; i < arg.values.length; i++)
+				if (arg.values[i].type != expectedArg.of)
 					return exit(
-						`${errorPreface}, in argument ${
-							i + 1
-						}, expected list to contain elements of type ${
-							expectedArg.of
-						}, found element of type ${arg.values[j].type} at list index ${j}`,
+						`${argErrorPreface}, expected list to contain elements of type ${expectedArg.of}, found element of type ${arg.values[i].type} at list index ${i}`,
 					);
 	}
 };
