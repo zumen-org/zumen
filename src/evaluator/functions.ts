@@ -1,4 +1,5 @@
 import { Atom, FunCall, List, Number, String } from "../parser/parser.ts";
+import { DeepReadOnly } from "../utils.ts";
 
 type Argument =
 	| {
@@ -19,8 +20,12 @@ type Argument =
 			function: string | string[];
 	  };
 
+const makeFnRecord = <T extends Record<string, DeepReadOnly<Argument[]>>>(
+	v: T,
+) => v;
+
 // variadic argument must be the last argument in the array
-export const Functions: Record<string, Argument[]> = {
+export const Functions = makeFnRecord({
 	flow: [
 		{
 			name: "name of the flow",
@@ -72,4 +77,4 @@ export const Functions: Record<string, Argument[]> = {
 		{ name: "program name", type: "string" },
 		{ name: "program class", type: "string" },
 	],
-};
+} as const);

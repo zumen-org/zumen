@@ -3,15 +3,17 @@ import { Node } from "../types.ts";
 import { exit } from "../utils.ts";
 import { Functions } from "./functions.ts";
 
-const checkFunctionArgs = (name: string, args: Expression[]) => {
-	const expectedArgs = Functions[name];
+const checkFunctionArgs = (name: string, args: Expression[]): args is any[] => {
+	const expectedArgs = Functions[name as keyof typeof Functions];
 
 	// check if the function exists
 	if (!args) return exit(`Call to unknown function '${name}'`);
 
 	const expectedArgLength = expectedArgs.length;
 	const lastExpectedArg = expectedArgs[expectedArgLength - 1];
-	const variadic = lastExpectedArg.variadic;
+
+	// @ts-expect-error only the last element needs variadic
+	const variadic = lastExpectedArg.variadic ?? false;
 
 	// check if the number of arguments is correct
 	if (!variadic && args.length != expectedArgs.length)
@@ -59,6 +61,8 @@ const checkFunctionArgs = (name: string, args: Expression[]) => {
 						`${argErrorPreface}, expected list to contain elements of type ${expectedArg.of}, found element of type ${arg.values[i].type} at list index ${i}`,
 					);
 	}
+
+	return true;
 };
 
 export const evaluate = (definition: Expression[]): Node[] => {
@@ -66,7 +70,8 @@ export const evaluate = (definition: Expression[]): Node[] => {
 
 	for (const expression of definition) {
 		if (expression.type == "fun-call" && expression.name == "flow") {
-			checkFunctionArgs(expression.name, expression.arguments);
+			const flowArgs = expression.arguments;
+			checkFunctionArgs(expression.name, flowArgs);
 		} else
 			exit(
 				`definition files must only contain 'flow' function calls, found:\n`,
