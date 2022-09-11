@@ -7,6 +7,7 @@ export interface Exec {
 }
 
 interface Arrangement {
+	split: "horizontal" | "vertical";
 	ratio: number[];
 	nodes: (Arrangement | Exec)[];
 }
@@ -37,6 +38,7 @@ function toArrangementOrExec(call: FunCall): Arrangement | Exec {
 			exit(`Different number of ratios and layouts provided!`);
 
 		return {
+			split: (call as FunCall).name as "horizontal" | "vertical",
 			ratio,
 			nodes,
 		};
@@ -64,6 +66,7 @@ export const getWorkspaceDefinition = (
 	return {
 		workspace: (workspace as Number).value,
 		node: {
+			split: (node as FunCall).name as "horizontal" | "vertical",
 			ratio,
 			nodes,
 		},

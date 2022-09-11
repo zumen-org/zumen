@@ -13,7 +13,7 @@ function main() {
 	if (!validate(result)) return;
 
 	const flows = evaluate(result);
-	console.log(flows);
+	console.log(Deno.inspect(flows, { colors: true, depth: 100 }));
 }
 
 main();
