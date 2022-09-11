@@ -11,18 +11,18 @@ function getNode(arrangement: Arrangement, percent: number): LayoutNode {
 		layout: arrangement.split == "vertical" ? "splith" : "splitv",
 		percent: percent,
 		type: "con",
-		nodes: arrangement.nodes.map((v, i) => {
+		nodes: arrangement.nodes.map((node, i) => {
 			// if this node is a layout
-			if ("split" in v) return getNode(v, arrangement.ratio[i]);
+			if ("split" in node) return getNode(node, arrangement.ratio[i]);
 			// if this node is an Exec/Individual node
 			else
 				return {
-					name: v.programName,
+					name: node.programName,
 					type: "con",
 					percent: arrangement.ratio[i],
 					swallows: [
 						{
-							class: v.programClass,
+							class: node.programClass,
 						},
 					],
 				} as IndividualNode;
