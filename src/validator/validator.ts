@@ -1,4 +1,4 @@
-import { Expression } from "../parser/parser.ts";
+import { Expression, FunCall } from "../parser/parser.ts";
 import { exit } from "../utils.ts";
 import { Functions } from "./functions.ts";
 
@@ -64,7 +64,7 @@ const validateArgs = (name: string, args: Expression[]) => {
 	}
 };
 
-export const validate = (definition: Expression[]) => {
+export const validate = (definition: Expression[]): definition is FunCall[] => {
 	for (const expression of definition) {
 		if (expression.type == "fun-call" && expression.name == "flow") {
 			validateArgs(expression.name, expression.arguments);
@@ -74,4 +74,6 @@ export const validate = (definition: Expression[]) => {
 				expression,
 			);
 	}
+
+	return true;
 };

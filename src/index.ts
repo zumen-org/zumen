@@ -6,13 +6,14 @@ import { validate } from "./validator/validator.ts";
 
 function main() {
 	const program = Deno.readTextFileSync("test.lisp");
-	const result = parse(program);
 
+	const result = parse(program);
 	if (result instanceof ParseError) return exit(Parser.format(result));
 
-	validate(result);
+	if (!validate(result)) return;
 
-	console.log(evaluate(result));
+	const i3json = evaluate(result);
+	console.log(i3json);
 }
 
 main();
