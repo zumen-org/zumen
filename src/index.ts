@@ -6,7 +6,7 @@ import { parse } from "./parser/parser.ts";
 import { exit } from "./utils.ts";
 import { validate } from "./validator/validator.ts";
 
-function main() {
+async function main() {
 	const args = argparse(Deno.args);
 	const program = Deno.readTextFileSync(args["program"] ?? "test.lisp");
 
@@ -28,9 +28,9 @@ function main() {
 		return exit(`Unable to find flow '${flowName}' in the file ${program}`);
 
 	const layouts = generator(flow);
-	// console.log(Deno.inspect(layouts, { colors: true, depth: 100 }));
 
-	executor(layouts[0]);
+	// executing only one layout for testing
+	await executor(layouts[0]);
 }
 
 main();

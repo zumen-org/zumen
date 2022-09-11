@@ -8,8 +8,8 @@ export interface Layout {
 
 function getNode(arrangement: Arrangement, percent: number): LayoutNode {
 	return {
-		layout: arrangement.split == "vertical" ? "splith" : "splitv",
-		percent: percent,
+		layout: arrangement.split == "vertical" ? "splitv" : "splith",
+		percent: percent / 100,
 		type: "con",
 		nodes: arrangement.nodes.map((node, i) => {
 			// if this node is a layout
@@ -19,7 +19,7 @@ function getNode(arrangement: Arrangement, percent: number): LayoutNode {
 				return {
 					name: node.programName,
 					type: "con",
-					percent: arrangement.ratio[i],
+					percent: arrangement.ratio[i] / 100,
 					swallows: [
 						{
 							class: node.programClass,
@@ -37,7 +37,7 @@ export const generator = (flow: Flow): Layout[] => {
 		nodes.push({
 			workspace: definition.workspace,
 			// root node always covers the screen
-			node: getNode(definition.node, 1),
+			node: getNode(definition.node, 100),
 		});
 	}
 

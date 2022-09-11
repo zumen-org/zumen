@@ -1,6 +1,5 @@
 import { i3 } from "../deps.ts";
 import { Layout } from "../generator/generator.ts";
-import { exit } from "../utils.ts";
 
 const LAYOUT_FILE = "/tmp/zumen.ndjson";
 
