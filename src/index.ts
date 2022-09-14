@@ -8,7 +8,7 @@ import { validate } from "./validator/validator.ts";
 
 async function main() {
 	const args = argparse(Deno.args);
-	const program = Deno.readTextFileSync(args["program"] ?? "test.lisp");
+	const program = await Deno.readTextFile(args["program"] ?? "test.lisp");
 
 	// parse the lisp config
 	const result = parse(program);

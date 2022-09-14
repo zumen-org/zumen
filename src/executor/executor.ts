@@ -43,7 +43,7 @@ export const executor = async (layout: Layout) => {
 						colors.green("success"),
 						"All required programs launched, flow execution successful",
 					);
-					Deno.exit(1);
+					Deno.exit(0);
 				}
 			}
 		}
