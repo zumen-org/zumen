@@ -1,5 +1,6 @@
-import { Expression, FunCall, List, Number, String } from "../parser/parser.ts";
+import { FunCall, Number } from "../parser/parser.ts";
 import { exit } from "../utils.ts";
+import { ExecCall, LayoutCall, WsCall } from "../validator/validator.ts";
 
 export interface Exec {
 	programName: string;
@@ -17,19 +18,17 @@ export interface WorkspaceDefinition {
 	node: Arrangement;
 }
 
-function toArrangementOrExec(call: FunCall): Arrangement | Exec {
+function toArrangementOrExec(call: LayoutCall | ExecCall): Arrangement | Exec {
 	if (call.name == "exec") {
-		const [programName, programClass] = call.arguments.map(
-			v => (v as String).value,
-		);
+		const [programName, programClass] = call.arguments.map(v => v.value);
 		return {
 			programName,
 			programClass,
 		};
 	} else {
-		const [ratioExpr, ...nodeExprs] = (call as FunCall).arguments;
-		const ratio = (ratioExpr as List).values.map(v => (v as Number).value);
-		const nodes = (nodeExprs as FunCall[]).map(toArrangementOrExec);
+		const [ratioExpr, ...nodeExprs] = call.arguments;
+		const ratio = ratioExpr.values.map(v => (v as Number).value);
+		const nodes = nodeExprs.map(toArrangementOrExec);
 
 		if (ratio.reduce((a, b) => a + b) != 100)
 			exit(`Sum of ratio entries must be 100!`);
@@ -45,28 +44,20 @@ function toArrangementOrExec(call: FunCall): Arrangement | Exec {
 	}
 }
 
-export const getWorkspaceDefinition = (
-	call: Expression,
-): WorkspaceDefinition => {
+export const getWorkspaceDefinition = (wsCall: WsCall): WorkspaceDefinition => {
 	// top level layout node
-	const [workspace, node] = (call as FunCall).arguments;
+	const [workspace, node] = wsCall.arguments;
 
 	// ratio and internal nodes
-	const [ratioExpr, ...nodeExprs] = (node as FunCall).arguments;
+	const [ratioExpr, ...nodeExprs] = node.arguments;
 
-	const ratio = (ratioExpr as List).values.map(v => (v as Number).value);
-	const nodes = (nodeExprs as FunCall[]).map(toArrangementOrExec);
-
-	if (ratio.length != nodes.length)
-		exit(`Different number of ratios and layouts provided!`);
-
-	if (ratio.reduce((a, b) => a + b) != 100)
-		exit(`Sum of ratio entries must be 100!`);
+	const ratio = ratioExpr.values.map(v => v.value);
+	const nodes = nodeExprs.map(toArrangementOrExec);
 
 	return {
-		workspace: (workspace as Number).value,
+		workspace: workspace.value,
 		node: {
-			split: (node as FunCall).name as "horizontal" | "vertical",
+			split: node.name,
 			ratio,
 			nodes,
 		},

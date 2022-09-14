@@ -1,6 +1,6 @@
 import { Atom, FunCall, List, Number, String } from "../parser/parser.ts";
 
-type Argument =
+type ExpectedArgument =
 	| {
 			name: string;
 			type: (Atom | String | Number)["type"];
@@ -20,7 +20,7 @@ type Argument =
 	  };
 
 // variadic argument must be the last argument in the array
-export const Functions: Record<string, Argument[]> = {
+export const Functions: Record<string, ExpectedArgument[]> = {
 	flow: [
 		{
 			name: "name of the flow",

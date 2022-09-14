@@ -22,15 +22,18 @@ export interface Number {
 	value: number;
 }
 
-export interface List {
+export interface List<U extends Expression = Expression> {
 	type: "list";
-	values: Expression[];
+	values: U[];
 }
 
-export interface FunCall {
+export interface FunCall<
+	T extends string = string,
+	U extends Expression[] = Expression[],
+> {
 	type: "fun-call";
-	name: string;
-	arguments: Expression[];
+	name: T;
+	arguments: U;
 }
 
 export type Expression = Atom | String | Number | List | FunCall;
