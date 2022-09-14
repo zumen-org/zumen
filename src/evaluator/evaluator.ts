@@ -1,5 +1,5 @@
 import { Flow } from "../types.ts";
-import { ValidatedConfig } from "../validator/validator.ts";
+import { ValidatedConfig } from "../validator/types.ts";
 import { getWorkspaceDefinition, WorkspaceDefinition } from "./utils.ts";
 
 export const evaluate = (definition: ValidatedConfig[]): Flow[] => {

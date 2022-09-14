@@ -1,19 +1,7 @@
-import { Expression, FunCall, List, Number, String } from "../parser/parser.ts";
+import { Expression } from "../parser/parser.ts";
 import { exit } from "../utils.ts";
 import { Functions } from "./functions.ts";
-
-export type ExecCall = FunCall<"exec", [String, String]>;
-
-export type LayoutCall = FunCall<
-	"horizontal" | "vertical",
-	[List<Number>, ...ExecCall[]]
->;
-
-type WsArguments = [Number, LayoutCall];
-
-export type WsCall = FunCall<"ws", WsArguments>;
-
-export type ValidatedConfig = FunCall<"flow", [String, ...WsCall[]]>;
+import { ValidatedConfig } from "./types.ts";
 
 const validateArgs = (name: string, args: Expression[]) => {
 	const expectedArgs = Functions[name as keyof typeof Functions];

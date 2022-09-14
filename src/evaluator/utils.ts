@@ -1,6 +1,6 @@
 import { FunCall, Number } from "../parser/parser.ts";
 import { exit } from "../utils.ts";
-import { ExecCall, LayoutCall, WsCall } from "../validator/validator.ts";
+import { ExecCall, LayoutCall, WsCall } from "../validator/types.ts";
 
 export interface Exec {
 	programName: string;
