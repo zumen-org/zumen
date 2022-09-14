@@ -62,8 +62,10 @@ export const executor = async (layout: Layout) => {
 		console.log(
 			` ${
 				success
-					? "succeeded"
-					: `failed${parse_error ? " due to a parse error" : ""}`
+					? colors.green("succeeded")
+					: `${colors.red("failed")}${
+							parse_error ? " due to a parse error" : ""
+					  }`
 			}`,
 		);
 	}
