@@ -1,4 +1,4 @@
-import { argparse, ParseError, Parser } from "./deps.ts";
+import { argparse, colors, ParseError, Parser } from "./deps.ts";
 import { evaluate } from "./evaluator/evaluator.ts";
 import { executor } from "./executor/executor.ts";
 import { generator } from "./generator/generator.ts";
@@ -8,10 +8,24 @@ import { validate } from "./validator/validator.ts";
 
 async function main() {
 	const args = argparse(Deno.args);
-	const program = await Deno.readTextFile(args["program"] ?? "test.lisp");
+
+	if (args["help"] | args["h"]) {
+		console.log(`${colors.yellow("-h, --help")}\tshow this help message`);
+		console.log(
+			`${colors.yellow(
+				"--config",
+			)}  \tpath to lisp config file (default test.lisp)`,
+		);
+		console.log(
+			`${colors.yellow("--flow")}    \tname of flow to run (default main)`,
+		);
+		Deno.exit(0);
+	}
+
+	const config = await Deno.readTextFile(args["config"] ?? "test.lisp");
 
 	// parse the lisp config
-	const result = parse(program);
+	const result = parse(config);
 	if (result instanceof ParseError) return exit(Parser.format(result));
 
 	// validate the config
@@ -25,7 +39,7 @@ async function main() {
 	const flowName: string = args["flow"] ?? "main";
 	const flow = flows.find(v => v.name == flowName);
 	if (!flow)
-		return exit(`Unable to find flow '${flowName}' in the file ${program}`);
+		return exit(`Unable to find flow '${flowName}' in the file ${config}`);
 
 	const layouts = generator(flow);
 
