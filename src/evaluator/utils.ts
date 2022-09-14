@@ -5,6 +5,7 @@ import { ExecCall, LayoutCall, WsCall } from "../validator/types.ts";
 export interface Exec {
 	programName: string;
 	programClass: string;
+	programCmd: string;
 }
 
 export interface Arrangement {
@@ -20,10 +21,13 @@ export interface WorkspaceDefinition {
 
 function toArrangementOrExec(call: LayoutCall | ExecCall): Arrangement | Exec {
 	if (call.name == "exec") {
-		const [programName, programClass] = call.arguments.map(v => v.value);
+		const [programName, programClass, programCmd] = call.arguments.map(
+			v => v.value,
+		);
 		return {
 			programName,
 			programClass,
+			programCmd,
 		};
 	} else {
 		const [ratioExpr, ...nodeExprs] = call.arguments;

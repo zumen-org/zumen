@@ -17,6 +17,8 @@ export const executor = async (layout: Layout) => {
 	else console.log(`Loaded layout, waiting for template programs to open...`);
 
 	const requiredPrograms = layout.execNodes;
+
+	// wait for the programs to open
 	await wm.subscribe(["WINDOW"]);
 	wm.on(i3.Events.WINDOW, ctx => {
 		if (ctx.change == "new") {
@@ -48,4 +50,21 @@ export const executor = async (layout: Layout) => {
 			}
 		}
 	});
+
+	// attempt to launch the programs
+	for (const program of requiredPrograms) {
+		console.log(
+			colors.yellow("info"),
+			`attempting to launch ${program.programName} using '${program.programCmd}'`,
+		);
+
+		const [{ success, parse_error }] = await wm.runCommand(program.programCmd);
+		console.log(
+			` ${
+				success
+					? "succeeded"
+					: `failed${parse_error ? " due to a parse error" : ""}`
+			}`,
+		);
+	}
 };

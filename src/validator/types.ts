@@ -9,4 +9,4 @@ export type LayoutCall = FunCall<
 	[List<Number>, ...ExecCall[]]
 >;
 
-export type ExecCall = FunCall<"exec", [String, String]>;
+export type ExecCall = FunCall<"exec", [String, String, String]>;

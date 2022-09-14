@@ -9,17 +9,18 @@ type ExpectedArgument =
 	| {
 			name: string;
 			type: List["type"];
-			variadic?: boolean;
 			of: (Atom | String | Number | FunCall)["type"];
+			variadic?: boolean;
 	  }
 	| {
 			name: string;
 			type: FunCall["type"];
-			variadic?: boolean;
 			function: string | string[];
+			variadic?: boolean;
 	  };
 
 // variadic argument must be the last argument in the array
+// all optional arguments must be at the end, before any variadic arguments
 export const Functions: Record<string, ExpectedArgument[]> = {
 	flow: [
 		{
@@ -71,5 +72,6 @@ export const Functions: Record<string, ExpectedArgument[]> = {
 	exec: [
 		{ name: "program name", type: "string" },
 		{ name: "program class", type: "string" },
+		{ name: "i3 command to launch program", type: "string" },
 	],
 };
