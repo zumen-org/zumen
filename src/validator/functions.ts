@@ -20,7 +20,6 @@ type ExpectedArgument =
 	  };
 
 // variadic argument must be the last argument in the array
-// all optional arguments must be at the end, before any variadic arguments
 export const Functions: Record<string, ExpectedArgument[]> = {
 	flow: [
 		{
