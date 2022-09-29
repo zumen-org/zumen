@@ -48,6 +48,8 @@ async function main() {
 		console.log(colors.blue("*"), ` workspace ${layout.workspace}`);
 		await executor(layout);
 	}
+
+	Deno.exit(0);
 }
 
 main();
