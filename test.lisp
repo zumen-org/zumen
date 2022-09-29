@@ -1,5 +1,5 @@
 (flow "main"
-  (ws 8 :pre "exec 'killall firefox'" :post "exec 'killall chromium'"
+  (ws 8 :pre "exec bash -c 'killall chromium'" :post "exec bash -c 'killall firefox'"
     (horizontal '(80 20)
       (exec "Mozilla Firefox" "firefox" "exec firefox")
       (vertical '(60 40)
