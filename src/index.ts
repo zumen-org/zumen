@@ -44,7 +44,10 @@ async function main() {
 	const layouts = generator(flow);
 
 	// executing only one layout for testing
-	await executor(layouts[0]);
+	for (const layout of layouts) {
+		console.log(colors.blue("*"), ` workspace ${layout.workspace}`);
+		await executor(layout);
+	}
 }
 
 main();

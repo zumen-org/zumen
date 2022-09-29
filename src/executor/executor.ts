@@ -20,56 +20,60 @@ export const executor = async (layout: Layout) => {
 
 	// run the pre command
 	if (layout.pre) {
-		console.log("Running the pre command...");
+		console.log("Running the pre-run command...");
 		const [{ success }] = await wm.runCommand(layout.pre);
-		console.log(`Pre command execution ${success ? "succeeded" : "failed"}`);
+		console.log(
+			`Pre-run command execution ${success ? "succeeded" : "failed"}!`,
+		);
 	}
 
-	// start a listener that waits for the programs to open
-	await wm.subscribe(["WINDOW"]);
-	wm.on(i3.Events.WINDOW, ctx => {
-		if (ctx.change == "new") {
-			const targetIndex = requiredPrograms.findIndex(
-				v =>
-					ctx.container.name == v.programName &&
-					ctx.container.window_properties?.class == v.programClass,
-			);
+	console.log(`${requiredPrograms.length} programs expected to launch...`);
 
-			if (targetIndex >= 0) {
-				// this is a program required by our template
-				const target = requiredPrograms[targetIndex];
-				console.log(
-					`${target.programName} (class: '${target.programClass}') opened up`,
+	await wm.subscribe(["WINDOW"]);
+	// start a listener that waits for the programs to open
+	const programOpenPromise = new Promise<void>(resolve => {
+		wm.on(i3.Events.WINDOW, ctx => {
+			if (ctx.change == "new") {
+				const targetIndex = requiredPrograms.findIndex(
+					v =>
+						ctx.container.name == v.programName &&
+						ctx.container.window_properties?.class == v.programClass,
 				);
 
-				if (targetIndex >= 0) requiredPrograms.splice(targetIndex, 1);
-				if (requiredPrograms.length > 0)
+				if (targetIndex >= 0) {
+					// this is a program required by our template
+					const target = requiredPrograms[targetIndex];
 					console.log(
-						`Waiting for ${requiredPrograms.length} other programs to launch...`,
-					);
-				else {
-					console.log(
-						colors.green("success"),
-						"All required programs launched, flow execution successful!",
+						`${target.programName} (class: '${target.programClass}') opened up`,
 					);
 
-					if (layout.post) {
-						// run the post command
-						console.log("Running the post command...");
-						wm.runCommand(layout.post).then(([{ success }]) => {
-							console.log(
-								success
-									? "post command execution successful! exiting..."
-									: "failed to run the post command, exiting...",
-							);
-							Deno.exit(0);
-						});
-					} else {
-						Deno.exit(0);
+					if (targetIndex >= 0) requiredPrograms.splice(targetIndex, 1);
+					if (requiredPrograms.length > 0)
+						console.log(
+							`Waiting for ${requiredPrograms.length} other programs to launch...`,
+						);
+					else {
+						console.log(
+							colors.green("success"),
+							"All required programs launched, flow execution successful!",
+						);
+
+						if (layout.post) {
+							// run the post command
+							console.log("Running the post command...");
+							wm.runCommand(layout.post).then(([{ success }]) => {
+								console.log(
+									success
+										? "Post-run command execution successful!"
+										: "Failed to run the post-run command",
+								);
+								resolve();
+							});
+						} else resolve();
 					}
 				}
 			}
-		}
+		});
 	});
 
 	// attempt to launch the programs
@@ -83,11 +87,13 @@ export const executor = async (layout: Layout) => {
 		console.log(
 			` ${
 				success
-					? colors.green("succeeded")
+					? colors.green("command execution succeeded")
 					: `${colors.red("failed")}${
 							parse_error ? " due to a parse error" : ""
 					  }`
 			}`,
 		);
 	}
+
+	await programOpenPromise;
 };
