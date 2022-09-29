@@ -20,7 +20,7 @@ export const executor = async (layout: Layout) => {
 
 	// run the pre command
 	if (layout.pre) {
-		console.log("Running the pre command");
+		console.log("Running the pre command...");
 		const [{ success }] = await wm.runCommand(layout.pre);
 		console.log(`Pre command execution ${success ? "succeeded" : "failed"}`);
 	}
@@ -39,7 +39,7 @@ export const executor = async (layout: Layout) => {
 				// this is a program required by our template
 				const target = requiredPrograms[targetIndex];
 				console.log(
-					`${target.programName} (class: '${target.programClass}') was opened`,
+					`${target.programName} (class: '${target.programClass}') opened up`,
 				);
 
 				if (targetIndex >= 0) requiredPrograms.splice(targetIndex, 1);

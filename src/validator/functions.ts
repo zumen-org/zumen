@@ -44,7 +44,7 @@ type Functions = Record<
 	{
 		properties: Properties;
 		arguments: Argument[];
-		taggedArguments?: ExpectedKeywordArgument[];
+		taggedArguments: ExpectedKeywordArgument[];
 	}
 >;
 
@@ -65,6 +65,7 @@ export const Functions = makeFunctions({
 				function: "ws",
 			},
 		],
+		taggedArguments: [],
 	},
 	ws: {
 		properties: { variadic: true },
@@ -105,6 +106,7 @@ export const Functions = makeFunctions({
 				function: ["horizontal", "vertical", "exec"],
 			},
 		],
+		taggedArguments: [],
 	},
 	vertical: {
 		properties: { variadic: true },
@@ -120,6 +122,7 @@ export const Functions = makeFunctions({
 				function: ["horizontal", "vertical", "exec"],
 			},
 		],
+		taggedArguments: [],
 	},
 	exec: {
 		properties: { variadic: false },
@@ -128,5 +131,6 @@ export const Functions = makeFunctions({
 			{ name: "program class", type: "string" },
 			{ name: "i3 command to launch program", type: "string" },
 		],
+		taggedArguments: [],
 	},
 } as const);

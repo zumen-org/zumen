@@ -1,5 +1,9 @@
-import { Expression, FunCallArgument } from "../parser/parser.ts";
-import { exit } from "../utils.ts";
+import {
+	Expression,
+	FunCallArgument,
+	KeywordParameter,
+} from "../parser/parser.ts";
+import { exit, partition } from "../utils.ts";
 import { Functions } from "./functions.ts";
 import { ValidatedConfig } from "./types.ts";
 
@@ -26,15 +30,38 @@ const validateArgs = (name: string, args: FunCallArgument[]) => {
 
 	const errorPreface = `In call to function '${name}'`;
 
-	// loop over the actual args and compare them with expected args
-	for (let i = 0; i < args.length; i++) {
-		const arg = args[i];
+	const [keywordArgs, regularArgs] = partition(
+		args,
+		v => v.type == "keyword-parameter",
+	);
+
+	for (let i = 0; i < keywordArgs.length; i++) {
+		const arg = keywordArgs[i] as KeywordParameter;
+		const argErrorPreface = `${errorPreface}, in an argument`;
+		const match = fn.taggedArguments.find(v => v.keyword == arg.keyword);
+
+		if (!match)
+			return exit(
+				`${argErrorPreface}, found invalid keyword parameter with keyword '${arg.keyword}'`,
+			);
+
+		if (arg.value.type != match.valueType)
+			return exit(
+				`${argErrorPreface}, found ${arg.value.type} with keyword '${arg.keyword}', expected ${match.valueType}`,
+			);
+	}
+
+	// loop over the regular (non-keyword) args and compare them with expected args
+	for (let i = 0; i < regularArgs.length; i++) {
+		const arg = regularArgs[i];
+
+		const argErrorPreface = `${errorPreface}, in an argument`;
+
 		const expectedArg =
 			fn.properties.variadic && i >= expectedArgLength
 				? fn.arguments.at(-1)
 				: fn.arguments[i];
 
-		const argErrorPreface = `${errorPreface}, in argument ${i + 1}`;
 		if (!expectedArg)
 			return exit(
 				`${argErrorPreface}, unable to obtain expected argument for validation`,
