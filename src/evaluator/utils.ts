@@ -26,6 +26,30 @@ export interface WorkspaceDefinition {
 	node: Arrangement;
 }
 
+function getInfoFromArgs(args: LayoutCall["arguments"]) {
+	const [ratioExpr, ...nodeExprs] = args;
+	const ratio = ratioExpr.values.map(v => v.value);
+	const nodes = nodeExprs.map(toArrangementOrExec);
+
+	const sum = ratio.reduce((a, b) => a + b);
+	if (sum != 100)
+		return exit(
+			`Sum of ratio entries must be 100! Found: ${sum}, ratios: ${ratio.join(
+				", ",
+			)}`,
+		);
+
+	if (ratio.length != nodes.length)
+		return exit(
+			`Different number of ratios and layouts provided! ratios: ${ratio.length}, nodes: ${nodes.length}`,
+		);
+
+	return {
+		ratio,
+		nodes,
+	};
+}
+
 function toArrangementOrExec(call: LayoutCall | ExecCall): Arrangement | Exec {
 	if (call.name == "exec") {
 		const [programName, programClass, programCmd] = call.arguments.map(
@@ -37,16 +61,7 @@ function toArrangementOrExec(call: LayoutCall | ExecCall): Arrangement | Exec {
 			programCmd,
 		};
 	} else {
-		const [ratioExpr, ...nodeExprs] = call.arguments;
-		const ratio = ratioExpr.values.map(v => (v as Number).value);
-		const nodes = nodeExprs.map(toArrangementOrExec);
-
-		if (ratio.reduce((a, b) => a + b) != 100)
-			exit(`Sum of ratio entries must be 100!`);
-
-		if (ratio.length != nodes.length)
-			exit(`Different number of ratios and layouts provided!`);
-
+		const { ratio, nodes } = getInfoFromArgs(call.arguments);
 		return {
 			split: (call as FunCall).name as "horizontal" | "vertical",
 			ratio,
@@ -57,18 +72,19 @@ function toArrangementOrExec(call: LayoutCall | ExecCall): Arrangement | Exec {
 
 export const getWorkspaceDefinition = (wsCall: WsCall): WorkspaceDefinition => {
 	// top level layout node
-	const [keywordParams, rest] = partition(
+	// the cast is required because a keyword parameter might occur
+	// at any position in the arguments. however, the positional
+	// integrity of the other arguments has been verified in the
+	// validator, so this is safe to do
+	const [keywordParams, otherParams] = partition(
 		wsCall.arguments,
 		v => v.type === "keyword-parameter",
 	) as [WsCallKeywordParameters[], [Number, LayoutCall]];
 
-	const [workspace, node] = rest;
+	const [workspace, node] = otherParams;
 
-	// ratio and internal nodes
-	const [ratioExpr, ...nodeExprs] = node.arguments;
-
-	const ratio = ratioExpr.values.map(v => v.value);
-	const nodes = nodeExprs.map(toArrangementOrExec);
+	// this is for the root layout of a workspace file
+	const { ratio, nodes } = getInfoFromArgs(node.arguments);
 
 	type PreKeywordParameter = KeywordParameter<"pre", String> | undefined;
 	type PostKeywordParameter = KeywordParameter<"post", String> | undefined;
