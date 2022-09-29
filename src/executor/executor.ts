@@ -18,7 +18,14 @@ export const executor = async (layout: Layout) => {
 
 	const requiredPrograms = layout.execNodes;
 
-	// wait for the programs to open
+	// run the pre command
+	if (layout.pre) {
+		console.log("Running the pre command");
+		const [{ success }] = await wm.runCommand(layout.pre);
+		console.log(`Pre command execution ${success ? "succeeded" : "failed"}`);
+	}
+
+	// start a listener that waits for the programs to open
 	await wm.subscribe(["WINDOW"]);
 	wm.on(i3.Events.WINDOW, ctx => {
 		if (ctx.change == "new") {
@@ -43,9 +50,23 @@ export const executor = async (layout: Layout) => {
 				else {
 					console.log(
 						colors.green("success"),
-						"All required programs launched, flow execution successful",
+						"All required programs launched, flow execution successful!",
 					);
-					Deno.exit(0);
+
+					if (layout.post) {
+						// run the post command
+						console.log("Running the post command...");
+						wm.runCommand(layout.post).then(([{ success }]) => {
+							console.log(
+								success
+									? "post command execution successful! exiting..."
+									: "failed to run the post command, exiting...",
+							);
+							Deno.exit(0);
+						});
+					} else {
+						Deno.exit(0);
+					}
 				}
 			}
 		}

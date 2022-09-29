@@ -1,23 +1,28 @@
-import { Expression } from "../parser/parser.ts";
+import { Expression, FunCallArgument } from "../parser/parser.ts";
 import { exit } from "../utils.ts";
 import { Functions } from "./functions.ts";
 import { ValidatedConfig } from "./types.ts";
 
-const validateArgs = (name: string, args: Expression[]) => {
-	const expectedArgs = Functions[name as keyof typeof Functions];
+const validateArgs = (name: string, args: FunCallArgument[]) => {
+	const fn = Functions[name as keyof typeof Functions];
 
 	// check if the function exists
 	if (!args) return exit(`Call to unknown function '${name}'`);
 
-	const expectedArgLength = expectedArgs.length;
-	const lastExpectedArg = expectedArgs[expectedArgLength - 1];
-	const variadic = lastExpectedArg.variadic ?? false;
+	const expectedArgLength = fn.arguments.length;
 
 	// check if the number of arguments is correct
-	if (!variadic && args.length != expectedArgs.length)
-		return exit(
-			`Function '${name}' takes ${expectedArgs.length} arguments, ${args.length} given`,
-		);
+	if (fn.properties.variadic) {
+		if (args.length < expectedArgLength)
+			return exit(
+				`Function '${name}' takes at least ${expectedArgLength} arguments, ${args.length} given`,
+			);
+	} else {
+		if (args.length != expectedArgLength)
+			return exit(
+				`Function '${name}' takes ${expectedArgLength} arguments, ${args.length} given`,
+			);
+	}
 
 	const errorPreface = `In call to function '${name}'`;
 
@@ -25,9 +30,15 @@ const validateArgs = (name: string, args: Expression[]) => {
 	for (let i = 0; i < args.length; i++) {
 		const arg = args[i];
 		const expectedArg =
-			variadic && i >= expectedArgLength ? lastExpectedArg : expectedArgs[i];
+			fn.properties.variadic && i >= expectedArgLength
+				? fn.arguments.at(-1)
+				: fn.arguments[i];
 
 		const argErrorPreface = `${errorPreface}, in argument ${i + 1}`;
+		if (!expectedArg)
+			return exit(
+				`${argErrorPreface}, unable to obtain expected argument for validation`,
+			);
 
 		// check if the argument is of the expected type
 		if (arg.type != expectedArg.type)

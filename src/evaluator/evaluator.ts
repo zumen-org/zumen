@@ -5,8 +5,8 @@ import { getWorkspaceDefinition, WorkspaceDefinition } from "./utils.ts";
 export const evaluate = (definition: ValidatedConfig[]): Flow[] => {
 	const flows: Flow[] = [];
 
-	for (const flow of definition) {
-		const [nameExpr, ...wsExprs] = flow.arguments;
+	for (const flowDefinition of definition) {
+		const [nameExpr, ...wsExprs] = flowDefinition.arguments;
 		const flowName = nameExpr.value;
 
 		const wsDefinitions: WorkspaceDefinition[] = [];

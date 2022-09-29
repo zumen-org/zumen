@@ -3,6 +3,8 @@ import { Flow, IndividualNode, LayoutNode } from "../types.ts";
 
 export interface Layout {
 	workspace: number;
+	pre: string | undefined;
+	post: string | undefined;
 	node: LayoutNode;
 	execNodes: Exec[];
 }
@@ -57,6 +59,8 @@ export const generator = (flow: Flow): Layout[] => {
 
 		nodes.push({
 			workspace: definition.workspace,
+			pre: definition.pre,
+			post: definition.post,
 			node,
 			execNodes,
 		});

@@ -1,76 +1,132 @@
-import { Atom, FunCall, List, Number, String } from "../parser/parser.ts";
+import {
+	Expression,
+	FunCall,
+	FunCallArgument,
+	KeywordParameter,
+	List,
+	Number,
+	String,
+} from "../parser/parser.ts";
+import { DeepReadOnly } from "../utils.ts";
 
-type ExpectedArgument =
-	| {
-			name: string;
-			type: (Atom | String | Number)["type"];
-			variadic?: boolean;
-	  }
-	| {
-			name: string;
-			type: List["type"];
-			of: (Atom | String | Number | FunCall)["type"];
-			variadic?: boolean;
-	  }
-	| {
-			name: string;
-			type: FunCall["type"];
-			function: string | string[];
-			variadic?: boolean;
-	  };
+interface GenericArgument<T extends FunCallArgument> {
+	name: string;
+	type: T["type"];
+}
 
-// variadic argument must be the last argument in the array
-export const Functions: Record<string, ExpectedArgument[]> = {
-	flow: [
-		{
-			name: "name of the flow",
-			type: "string",
-		},
-		{
-			name: "workspace definitions",
-			type: "fun-call",
-			function: "ws",
-			variadic: true,
-		},
-	],
-	ws: [
-		{ name: "workspace", type: "number" },
-		{
-			name: "nodes",
-			type: "fun-call",
-			function: ["horizontal", "vertical"],
-			variadic: true,
-		},
-	],
-	horizontal: [
-		{
-			name: "percentage ratio",
-			type: "list",
-			of: "number",
-		},
-		{
-			name: "nodes",
-			type: "fun-call",
-			function: ["horizontal", "vertical", "exec"],
-			variadic: true,
-		},
-	],
-	vertical: [
-		{
-			name: "percentage ratio",
-			type: "list",
-			of: "number",
-		},
-		{
-			name: "nodes",
-			type: "fun-call",
-			function: ["horizontal", "vertical", "exec"],
-			variadic: true,
-		},
-	],
-	exec: [
-		{ name: "program name", type: "string" },
-		{ name: "program class", type: "string" },
-		{ name: "i3 command to launch program", type: "string" },
-	],
-};
+type ExpectedValueArgument = GenericArgument<String | Number>;
+
+interface ExpectedListArgument extends GenericArgument<List> {
+	of: (String | Number | FunCall)["type"];
+}
+
+interface ExpectedFunCallArgument extends GenericArgument<FunCall> {
+	function: string | string[];
+}
+
+interface ExpectedKeywordArgument extends GenericArgument<KeywordParameter> {
+	keyword: string;
+	valueType: Expression["type"];
+}
+
+interface Properties {
+	// whether the last argument is variadic
+	variadic: boolean;
+}
+
+type Argument =
+	| ExpectedValueArgument
+	| ExpectedListArgument
+	| ExpectedFunCallArgument;
+
+type Functions = Record<
+	string,
+	{
+		properties: Properties;
+		arguments: Argument[];
+		taggedArguments?: ExpectedKeywordArgument[];
+	}
+>;
+
+export const makeFunctions = <T extends DeepReadOnly<Functions>>(v: T) => v;
+
+// keyword parameters are always optional
+export const Functions = makeFunctions({
+	flow: {
+		properties: { variadic: true },
+		arguments: [
+			{
+				name: "name of the flow",
+				type: "string",
+			},
+			{
+				name: "workspace definitions",
+				type: "fun-call",
+				function: "ws",
+			},
+		],
+	},
+	ws: {
+		properties: { variadic: true },
+		arguments: [
+			{ name: "workspace", type: "number" },
+			{
+				name: "nodes",
+				type: "fun-call",
+				function: ["horizontal", "vertical"],
+			},
+		],
+		taggedArguments: [
+			{
+				name: "command to execute before flow execution on this workspace",
+				type: "keyword-parameter",
+				keyword: "pre",
+				valueType: "string",
+			},
+			{
+				name: "command to execute after flow execution on this workspace",
+				type: "keyword-parameter",
+				keyword: "post",
+				valueType: "string",
+			},
+		],
+	},
+	horizontal: {
+		properties: { variadic: true },
+		arguments: [
+			{
+				name: "percentage ratio",
+				type: "list",
+				of: "number",
+			},
+			{
+				name: "nodes",
+				type: "fun-call",
+				function: ["horizontal", "vertical", "exec"],
+			},
+		],
+	},
+	vertical: {
+		properties: { variadic: true },
+		arguments: [
+			{
+				name: "percentage ratio",
+				type: "list",
+				of: "number",
+			},
+			{
+				name: "nodes",
+				type: "fun-call",
+				function: ["horizontal", "vertical", "exec"],
+			},
+		],
+	},
+	exec: {
+		properties: { variadic: false },
+		arguments: [
+			{ name: "program name", type: "string" },
+			{ name: "program class", type: "string" },
+			{ name: "i3 command to launch program", type: "string" },
+		],
+	},
+} as const);

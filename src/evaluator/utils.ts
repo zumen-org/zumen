@@ -1,6 +1,11 @@
-import { FunCall, Number } from "../parser/parser.ts";
-import { exit } from "../utils.ts";
-import { ExecCall, LayoutCall, WsCall } from "../validator/types.ts";
+import { FunCall, KeywordParameter, Number, String } from "../parser/parser.ts";
+import { exit, partition } from "../utils.ts";
+import {
+	ExecCall,
+	LayoutCall,
+	WsCall,
+	WsCallKeywordParameters,
+} from "../validator/types.ts";
 
 export interface Exec {
 	programName: string;
@@ -16,6 +21,8 @@ export interface Arrangement {
 
 export interface WorkspaceDefinition {
 	workspace: number;
+	pre: string | undefined;
+	post: string | undefined;
 	node: Arrangement;
 }
 
@@ -50,7 +57,12 @@ function toArrangementOrExec(call: LayoutCall | ExecCall): Arrangement | Exec {
 
 export const getWorkspaceDefinition = (wsCall: WsCall): WorkspaceDefinition => {
 	// top level layout node
-	const [workspace, node] = wsCall.arguments;
+	const [keywordParams, rest] = partition(
+		wsCall.arguments,
+		v => v.type === "keyword-parameter",
+	) as [WsCallKeywordParameters[], [Number, LayoutCall]];
+
+	const [workspace, node] = rest;
 
 	// ratio and internal nodes
 	const [ratioExpr, ...nodeExprs] = node.arguments;
@@ -58,8 +70,15 @@ export const getWorkspaceDefinition = (wsCall: WsCall): WorkspaceDefinition => {
 	const ratio = ratioExpr.values.map(v => v.value);
 	const nodes = nodeExprs.map(toArrangementOrExec);
 
+	type PreKeywordParameter = KeywordParameter<"pre", String> | undefined;
+	type PostKeywordParameter = KeywordParameter<"post", String> | undefined;
+
 	return {
 		workspace: workspace.value,
+		pre: (keywordParams.find(v => v.keyword == "pre") as PreKeywordParameter)
+			?.value?.value,
+		post: (keywordParams.find(v => v.keyword == "post") as PostKeywordParameter)
+			?.value?.value,
 		node: {
 			split: node.name,
 			ratio,

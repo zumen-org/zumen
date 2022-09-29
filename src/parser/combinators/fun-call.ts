@@ -1,6 +1,32 @@
-import { Combinator, many, stringl } from "../../deps.ts";
-import { expression, Expression } from "../parser.ts";
+import { Combinator, many, Parser, stringl } from "../../deps.ts";
+import {
+	expression,
+	Expression,
+	FunCallArgument,
+	KeywordParameter,
+} from "../parser.ts";
+import { zOneIn } from "../utils.ts";
 import { word } from "./util.ts";
+
+/*
+	description:
+		parses keyword parameters (colon and a word followed by an expression)
+
+	examples:
+		:age 20
+		:name "Okada"
+*/
+const keywordParameter = Parser.combinator<KeywordParameter>(ca => {
+	stringl(":")(ca);
+	const keyword = word(ca);
+	const value = expression(ca);
+
+	return {
+		type: "keyword-parameter",
+		keyword,
+		value,
+	};
+});
 
 /*
 	description:
@@ -8,12 +34,12 @@ import { word } from "./util.ts";
 
 	examples:
 		(say-name "adam")
-		(abcd :efgh "ijkl" 2345)
+		(calculate-cost :price 200 :quantity 30)
 */
-const combinator: Combinator<Expression> = ca => {
+const funCall: Combinator<Expression> = ca => {
 	stringl("(")(ca);
 	const name = word(ca);
-	const args = many(expression)(ca);
+	const args = many(zOneIn<FunCallArgument>(expression, keywordParameter))(ca);
 	stringl(")")(ca);
 
 	return {
@@ -23,4 +49,4 @@ const combinator: Combinator<Expression> = ca => {
 	};
 };
 
-export default combinator;
+export default funCall;
