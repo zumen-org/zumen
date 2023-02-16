@@ -3,7 +3,6 @@ import funCall from "./combinators/fun-call.ts";
 import list from "./combinators/list.ts";
 import number from "./combinators/number.ts";
 import string from "./combinators/string.ts";
-import comment from "./combinators/comment.ts";
 import { whitespace } from "./combinators/util.ts";
 import { zOneIn } from "./utils.ts";
 
@@ -46,7 +45,6 @@ export type Expression = String | Number | List | FunCall;
 
 export const expression = Parser.combinator(ca => {
 	whitespace(ca);
-	many(comment)(ca);
 	const r = zOneIn(funCall, list, number, string)(ca);
 	whitespace(ca);
 

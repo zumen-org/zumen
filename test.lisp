@@ -1,15 +1,20 @@
 ;; Please make sure that you use keyword parameters AFTER the required parameter!
 ;; For example, do (ws 8 :pre "your-pre-command")
 ;; and NOT: (ws :pre "your-pre-command" 8)
-;; Also please don't use any empty lines in this file
+
 (flow "main"
+  ;; zumen waits for all the applications in your config to launch.
+  ;; the pre command is run BEFORE and the post command is run AFTER
+  ;; all the specified programs on a workspace open up.
   (ws 8 :pre "exec bash -c 'echo doing'" :post "exec bash -c 'echo done'"
     (horizontal '(80 20)
-      (exec "exec firefox" :class "fi.*x" :name "Mozilla Fir.*x")
+    (vertical '(70 30)
+      ;; it is possible to use regexes for both the class and name!
+      ;; i3 uses the class to decide what window goes where.
+      (exec "exec kitty" :class "k.*y")
+      ;; specifying a name is optional, but if it doesn't match up,
+      ;; zumen will not move on to other workspaces.
+      (exec "exec firefox" :class "fi.*x" :name "Mozilla Fir.*x"))
       (vertical '(60 40)
-         (exec "exec kitty" :class "kitty")
-         (exec "exec kitty --class=floater" :class "flo.*er"))))
-  (ws 9 :pre "exec bash -c 'echo doing again!'"
-    (vertical '(30 70)
-      (exec "exec firefox" :class "firefox")
-      (exec "exec kitty" :class "k.*ty"))))
+         (exec "exec firefox" :class "firefox")
+         (exec "exec kitty" :class "kitty")))))
