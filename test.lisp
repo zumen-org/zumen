@@ -1,3 +1,7 @@
+;; Please make sure that you use keyword parameters AFTER the required parameter!
+;; For example, do (ws 8 :pre "your-pre-command")
+;; and NOT: (ws :pre "your-pre-command" 8)
+;; Also please don't use any empty lines in this file
 (flow "main"
   (ws 8 :pre "exec bash -c 'echo doing'" :post "exec bash -c 'echo done'"
     (horizontal '(80 20)
