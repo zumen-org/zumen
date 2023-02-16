@@ -42,3 +42,13 @@ This config opens the following on workspace 8:
 ![image](https://user-images.githubusercontent.com/30829387/219504129-6e0d5ec1-1c85-481e-acaf-489e108defef.png)
 
 Please go through the [example config](https://github.com/zumen-org/zumen/blob/master/test.lisp) for more information.
+
+## Compiling
+
+Zumen is written in Typescript, and can be made into an executable binary using [Deno](https://deno.land).
+
+```bash
+$ git clone https://github.com/zumen-org/zumen
+$ cd zumen
+$ deno compile --unstable --allow-read --allow-run --allow-write --output zumen
+```
