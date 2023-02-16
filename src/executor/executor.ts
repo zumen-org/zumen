@@ -16,14 +16,19 @@ export const executor = async (layout: Layout) => {
 	if (!success) exit(`Unable to load the layout file at '${LAYOUT_FILE}'`);
 	else console.log(`Loaded layout, waiting for template programs to open...`);
 
-	const requiredPrograms = layout.execNodes;
+	// only the programs that have a name or class are required
+	const requiredPrograms = layout.execNodes.filter(
+		v => v.programName || v.programClass,
+	);
 
 	// run the pre command
 	if (layout.pre) {
 		console.log("Running the pre-run command...");
 		const [{ success }] = await wm.runCommand(layout.pre);
 		console.log(
-			`Pre-run command execution ${success ? "succeeded" : "failed"}!`,
+			`Pre-run command execution ${
+				success ? "succeeded" : "failed, exiting..."
+			}!`,
 		);
 	}
 
@@ -34,18 +39,31 @@ export const executor = async (layout: Layout) => {
 	const programOpenPromise = new Promise<void>(resolve => {
 		wm.on(i3.Events.WINDOW, ctx => {
 			if (ctx.change == "new") {
-				const targetIndex = requiredPrograms.findIndex(
-					v =>
-						ctx.container.name == v.programName &&
-						ctx.container.window_properties?.class == v.programClass,
-				);
+				const targetIndex = requiredPrograms.findIndex(v => {
+					const containerName = ctx.container.name;
+					if (v.programName && containerName) {
+						if (!new RegExp(v.programName).exec(containerName)) return false;
+					}
+
+					const windowProperties = ctx.container.window_properties;
+					if (v.programClass && windowProperties) {
+						if (!new RegExp(v.programClass).exec(windowProperties.class))
+							return false;
+					}
+
+					return true;
+				});
 
 				if (targetIndex >= 0) {
 					// this is a program required by our template
 					const target = requiredPrograms[targetIndex];
-					console.log(
-						`${target.programName} (class: '${target.programClass}') opened up`,
-					);
+					if (target.programName) {
+						console.log(
+							`${target.programName} (class: '${target.programClass}') opened up`,
+						);
+					} else {
+						console.log(`'${target.programClass}' opened up`);
+					}
 
 					if (targetIndex >= 0) requiredPrograms.splice(targetIndex, 1);
 					if (requiredPrograms.length > 0)

@@ -17,7 +17,7 @@ async function main() {
 			)}  \tpath to lisp config file (default test.lisp)`,
 		);
 		console.log(
-			`${colors.yellow("--flow")}    \tname of flow to run (default main)`,
+			`${colors.yellow("--flow")}    \tname of the flow to run (default main)`,
 		);
 		Deno.exit(0);
 	}

@@ -24,7 +24,8 @@ interface ExpectedFunCallArgument extends GenericArgument<FunCall> {
 	function: string | string[];
 }
 
-interface ExpectedKeywordArgument extends GenericArgument<KeywordParameter> {
+export interface ExpectedKeywordArgument
+	extends GenericArgument<KeywordParameter> {
 	keyword: string;
 	valueType: Expression["type"];
 }
@@ -125,12 +126,25 @@ export const Functions = makeFunctions({
 		taggedArguments: [],
 	},
 	exec: {
-		properties: { variadic: false },
-		arguments: [
-			{ name: "program name", type: "string" },
-			{ name: "program class", type: "string" },
-			{ name: "i3 command to launch program", type: "string" },
+		// TODO: temporary hack to support keyword parameters
+		// since otherwise it's an argument count check failure
+		// since required params are always 1 and any more will
+		// cause the expected param count to mismatch
+		properties: { variadic: true },
+		arguments: [{ name: "i3 command to launch program", type: "string" }],
+		taggedArguments: [
+			{
+				name: "class of the program you want to launch (use xspy to find out)",
+				type: "keyword-parameter",
+				keyword: "class",
+				valueType: "string",
+			},
+			{
+				name: "name of the program you want to launch (use xspy to find out)",
+				type: "keyword-parameter",
+				keyword: "name",
+				valueType: "string",
+			},
 		],
-		taggedArguments: [],
 	},
 } as const);

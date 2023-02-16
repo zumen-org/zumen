@@ -8,7 +8,7 @@ import {
 } from "../validator/types.ts";
 
 export interface Exec {
-	programName: string;
+	programName: string | undefined;
 	programClass: string;
 	programCmd: string;
 }
@@ -52,13 +52,36 @@ function getInfoFromArgs(args: LayoutCall["arguments"]) {
 
 function toArrangementOrExec(call: LayoutCall | ExecCall): Arrangement | Exec {
 	if (call.name == "exec") {
-		const [programName, programClass, programCmd] = call.arguments.map(
-			v => v.value,
-		);
+		const [[programCmd], keywordParameters] = partition<
+			typeof call["arguments"][number]
+		>(call.arguments, v => v.type == "string") as [
+			[String],
+			KeywordParameter[],
+		];
+
+		type ClassKeywordParameter = KeywordParameter<"class", String> | undefined;
+		type NameKeywordParameter = KeywordParameter<"name", String> | undefined;
+
+		const programClass = (
+			keywordParameters.find(v => v.keyword == "class") as ClassKeywordParameter
+		)?.value?.value;
+
+		const programName = (
+			keywordParameters.find(v => v.keyword == "name") as NameKeywordParameter
+		)?.value?.value;
+
+		if (!programClass) {
+			console.log(call.arguments);
+			console.log(programCmd);
+			return exit(
+				`Invalid config, no class specified for '${programCmd.value}'`,
+			);
+		}
+
 		return {
 			programName,
 			programClass,
-			programCmd,
+			programCmd: programCmd.value,
 		};
 	} else {
 		const { ratio, nodes } = getInfoFromArgs(call.arguments);

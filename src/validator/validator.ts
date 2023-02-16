@@ -4,7 +4,7 @@ import {
 	KeywordParameter,
 } from "../parser/parser.ts";
 import { exit, partition } from "../utils.ts";
-import { Functions } from "./functions.ts";
+import { ExpectedKeywordArgument, Functions } from "./functions.ts";
 import { ValidatedConfig } from "./types.ts";
 
 const validateArgs = (name: string, args: FunCallArgument[]) => {
@@ -38,7 +38,9 @@ const validateArgs = (name: string, args: FunCallArgument[]) => {
 	for (let i = 0; i < keywordArgs.length; i++) {
 		const arg = keywordArgs[i] as KeywordParameter;
 		const argErrorPreface = `${errorPreface}, in an argument`;
-		const match = fn.taggedArguments.find(v => v.keyword == arg.keyword);
+		const match = (
+			fn.taggedArguments as readonly ExpectedKeywordArgument[]
+		).find(v => v.keyword == arg.keyword);
 
 		if (!match)
 			return exit(

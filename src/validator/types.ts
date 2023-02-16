@@ -12,6 +12,10 @@ export type WsCallKeywordParameters =
 	| KeywordParameter<"pre", String>
 	| KeywordParameter<"post", String>;
 
+export type ExecCallKeywordParameters =
+	| KeywordParameter<"class", String>
+	| KeywordParameter<"name", String>;
+
 export type WsCall = FunCall<
 	"ws",
 	(Number | LayoutCall | WsCallKeywordParameters)[]
@@ -22,4 +26,4 @@ export type LayoutCall = FunCall<
 	[List<Number>, ...ExecCall[]]
 >;
 
-export type ExecCall = FunCall<"exec", [String, String, String]>;
+export type ExecCall = FunCall<"exec", [String] | WsCallKeywordParameters[]>;
