@@ -7,8 +7,8 @@ Zumen is a tool that allows you to specify layouts in percentages using a declar
 ```lisp
   (ws 9
     (vertical '(30 70)
-      (exec "exec firefox" :class "firefox")
-      (exec "exec kitty" :class "k.*ty"))))
+      (exec "firefox" :class "firefox")
+      (exec "kitty" :class "k.*ty"))))
 ```
 
 This config will open firefox on 30% of the vertical size of the window and kitty on the remaining 70% of the vertical window on workspace 9!
@@ -21,11 +21,11 @@ This config will open firefox on 30% of the vertical size of the window and kitt
   (ws 8
     (horizontal '(80 20)
       (vertical '(70 30)
-        (exec "exec kitty" :class "kitty")
-        (exec "exec firefox" :class "fi.*x"))
+        (exec "kitty" :class "kitty")
+        (exec "firefox" :class "fi.*x"))
       (vertical '(60 40)
-         (exec "exec firefox" :class "firefox")
-         (exec "exec kitty" :class "kitty"))))
+         (exec "firefox" :class "firefox")
+         (exec "kitty" :class "kitty"))))
 ```
 
 This config opens the following on workspace 8:  
