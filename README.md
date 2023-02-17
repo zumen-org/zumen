@@ -45,7 +45,8 @@ Please go through the [example config](https://github.com/zumen-org/zumen/blob/m
 
 ## Compiling
 
-Zumen is written in Typescript, and can be made into an executable binary using [Deno](https://deno.land).
+Zumen is written in Typescript, and can be made into an executable binary using [Deno](https://deno.land).  
+You can also use a binary from the [releases](https://github.com/zumen-org/zumen/releases).
 
 ```bash
 $ git clone https://github.com/zumen-org/zumen
