@@ -93,9 +93,10 @@ export const executor = async (layout: Layout) => {
 
 	// attempt to launch the programs
 	for (const program of requiredPrograms) {
+		const programIdentifier = program.programName ?? program.programClass;
 		console.log(
 			colors.yellow("info"),
-			`attempting to launch ${program.programName} using '${program.programCmd}'`,
+			`attempting to launch ${programIdentifier} using '${program.programCmd}'`,
 		);
 
 		const [{ success, parse_error }] = await wm.runCommand(program.programCmd);
