@@ -134,13 +134,13 @@ export const Functions = makeFunctions({
 		arguments: [{ name: "i3 command to launch program", type: "string" }],
 		taggedArguments: [
 			{
-				name: "class of the program you want to launch (use xspy to find out)",
+				name: "class of the program you want to launch",
 				type: "keyword-parameter",
 				keyword: "class",
 				valueType: "string",
 			},
 			{
-				name: "name of the program you want to launch (use xspy to find out)",
+				name: "name of the program you want to launch",
 				type: "keyword-parameter",
 				keyword: "name",
 				valueType: "string",
