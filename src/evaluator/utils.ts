@@ -73,8 +73,6 @@ function toArrangementOrExec(call: LayoutCall | ExecCall): Arrangement | Exec {
 		// class is required, since otherwise i3 doesn't
 		// know what program a template needs to swallow
 		if (!programClass) {
-			console.log(call.arguments);
-			console.log(programCmd);
 			return exit(
 				`Invalid config, no class specified for '${programCmd.value}'`,
 			);
