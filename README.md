@@ -53,6 +53,9 @@ _NET_WM_NAME(UTF8_STRING) = "OpenRGB"
   
 `WM_CLASS` (`openrgb`) is the `class`, and `_NET_WM_NAME` (`OpenRGB`) is the `name`.
 
+## Gotchas
+If the `name` you obtained from `xprop` does not work, the application likely changes its name after launching. To get around this, you need to find the name the application uses as soon as it launches.
+
 ## Compiling
 
 Zumen is written in Typescript, and can be made into an executable binary using [Deno](https://deno.land).  
