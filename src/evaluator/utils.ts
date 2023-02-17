@@ -70,6 +70,8 @@ function toArrangementOrExec(call: LayoutCall | ExecCall): Arrangement | Exec {
 			keywordParameters.find(v => v.keyword == "name") as NameKeywordParameter
 		)?.value?.value;
 
+		// class is required, since otherwise i3 doesn't
+		// know what program a template needs to swallow
 		if (!programClass) {
 			console.log(call.arguments);
 			console.log(programCmd);
@@ -81,7 +83,7 @@ function toArrangementOrExec(call: LayoutCall | ExecCall): Arrangement | Exec {
 		return {
 			programName,
 			programClass,
-			programCmd: programCmd.value,
+			programCmd: `exec '${programCmd.value}'`,
 		};
 	} else {
 		const { ratio, nodes } = getInfoFromArgs(call.arguments);

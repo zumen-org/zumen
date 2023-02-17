@@ -16,10 +16,7 @@ export const executor = async (layout: Layout) => {
 	if (!success) exit(`Unable to load the layout file at '${LAYOUT_FILE}'`);
 	else console.log(`Loaded layout, waiting for template programs to open...`);
 
-	// only the programs that have a name or class are required
-	const requiredPrograms = layout.execNodes.filter(
-		v => v.programName || v.programClass,
-	);
+	const requiredPrograms = layout.execNodes;
 
 	// run the pre command
 	if (layout.pre) {
@@ -46,7 +43,7 @@ export const executor = async (layout: Layout) => {
 					}
 
 					const windowProperties = ctx.container.window_properties;
-					if (v.programClass && windowProperties) {
+					if (windowProperties) {
 						if (!new RegExp(v.programClass).exec(windowProperties.class))
 							return false;
 					}
