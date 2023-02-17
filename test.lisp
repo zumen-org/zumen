@@ -12,8 +12,8 @@
       ;; it is possible to use regexes for both the class and name!
       ;; i3 uses the class to decide what window goes where.
       (exec "kitty" :class "k.*y")
-      ;; specifying a name is optional, but if it doesn't match up,
-      ;; zumen will not move on to other workspaces.
+      ;; you can specify either a name or a class, or both
+      ;; it's not possible to specify neither
       (exec "firefox" :class "fi.*x" :name "Mozilla Fir.*x"))
       (vertical '(60 40)
          (exec "firefox" :class "firefox")

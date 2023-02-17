@@ -27,7 +27,11 @@ export type IndividualNode = {
 	name: string;
 	type: Container;
 	percent: number;
-	swallows: { class: string }[];
+	swallows: (
+		| { class: string }
+		| { title: string }
+		| { class: string; title: string }
+	)[];
 };
 
 export type Node = IndividualNode | LayoutNode;

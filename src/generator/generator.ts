@@ -1,5 +1,6 @@
 import { Arrangement, Exec } from "../evaluator/utils.ts";
 import { Flow, IndividualNode, LayoutNode } from "../types.ts";
+import { objectIf } from "../utils.ts";
 
 export interface Layout {
 	workspace: number;
@@ -36,7 +37,8 @@ function getNodeAndExecNodes(
 					percent: arrangement.ratio[i] / 100,
 					swallows: [
 						{
-							class: node.programClass,
+							...objectIf(!!node.programClass, { class: node.programClass }),
+							...objectIf(!!node.programName, { title: node.programName }),
 						},
 					],
 				} as IndividualNode;

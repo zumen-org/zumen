@@ -9,7 +9,7 @@ import {
 
 export interface Exec {
 	programName: string | undefined;
-	programClass: string;
+	programClass?: string;
 	programCmd: string;
 }
 
@@ -70,18 +70,15 @@ function toArrangementOrExec(call: LayoutCall | ExecCall): Arrangement | Exec {
 			keywordParameters.find(v => v.keyword == "name") as NameKeywordParameter
 		)?.value?.value;
 
-		// class is required, since otherwise i3 doesn't
-		// know what program a template needs to swallow
-		if (!programClass) {
+		if (!programClass && !programName)
 			return exit(
-				`Invalid config, no class specified for '${programCmd.value}'`,
+				`Unable to execute '${programCmd}' since neither class nor name given!`,
 			);
-		}
 
 		return {
 			programName,
 			programClass,
-			programCmd: `exec '${programCmd.value}'`,
+			programCmd: `exec "${programCmd.value}"`,
 		};
 	} else {
 		const { ratio, nodes } = getInfoFromArgs(call.arguments);

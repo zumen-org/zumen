@@ -43,7 +43,7 @@ export const executor = async (layout: Layout) => {
 					}
 
 					const windowProperties = ctx.container.window_properties;
-					if (windowProperties) {
+					if (v.programClass && windowProperties) {
 						if (!new RegExp(v.programClass).exec(windowProperties.class))
 							return false;
 					}
