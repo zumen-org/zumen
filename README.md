@@ -43,6 +43,16 @@ This config opens the following on workspace 8:
 
 Please go through the [example config](https://github.com/zumen-org/zumen/blob/master/test.lisp) for more information.
 
+## Tips
+If you don't know what to pass for class/name in the config, you can use the `xprop` tool to help you decide.  
+```bash
+$ xprop WM_CLASS _NET_WM_NAME # click the target window after executing this
+WM_CLASS(STRING) = "openrgb", "openrgb"
+_NET_WM_NAME(UTF8_STRING) = "OpenRGB"
+```
+  
+`WM_CLASS` (`openrgb`) is the `class`, and `_NET_WM_NAME` (`OpenRGB`) is the `name`.
+
 ## Compiling
 
 Zumen is written in Typescript, and can be made into an executable binary using [Deno](https://deno.land).  
